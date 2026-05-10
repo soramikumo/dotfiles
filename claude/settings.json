@@ -1,0 +1,45 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "Bash(*)",
+      "Write(*)",
+      "Edit(*)",
+      "WebFetch"
+    ],
+    "deny": [
+      "Bash(dd:*)",
+      "Bash(mkfs:*)",
+      "Read(**/.env)",
+      "Read(**/secrets/**)",
+      "Read(**/config/**)"
+    ],
+    "ask": [
+      "Bash(rm:*)",
+      "Bash(git push:*)",
+      "Bash(git rebase:*)",
+      "Bash(chmod:*)",
+      "Bash(chown:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)"
+    ]
+  },
+  "hooks": {
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "ccgate claude"
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "gopls-lsp@claude-plugins-official": true
+  },
+  "interaction": {
+    "confirmationMode": "minimal"
+  }
+}
