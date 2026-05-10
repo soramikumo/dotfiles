@@ -5,7 +5,8 @@
       "Bash(*)",
       "Write(*)",
       "Edit(*)",
-      "WebFetch"
+      "WebFetch",
+      "Bash(git push:*)"
     ],
     "deny": [
       "Bash(dd:*)",
@@ -16,7 +17,6 @@
     ],
     "ask": [
       "Bash(rm:*)",
-      "Bash(git push:*)",
       "Bash(git rebase:*)",
       "Bash(chmod:*)",
       "Bash(chown:*)",
