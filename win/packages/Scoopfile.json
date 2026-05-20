@@ -1,0 +1,16 @@
+{
+    "apps": [
+        { "Name": "7zip",       "Source": "main"   },
+        { "Name": "everything", "Source": "extras" },
+        { "Name": "fzf",        "Source": "main"   },
+        { "Name": "glab",       "Source": "main"   },
+        { "Name": "lazygit",    "Source": "extras" },
+        { "Name": "make",       "Source": "main"   },
+        { "Name": "micro",      "Source": "main"   },
+        { "Name": "obsidian",   "Source": "extras" }
+    ],
+    "buckets": [
+        { "Name": "main",   "Source": "https://github.com/ScoopInstaller/Main.git"   },
+        { "Name": "extras", "Source": "https://github.com/ScoopInstaller/Extras.git" }
+    ]
+}
