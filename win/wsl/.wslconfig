@@ -1,0 +1,9 @@
+[wsl2]
+networkingMode=mirrored
+
+# メモリ上限 (必要に応じて調整)
+# memory=8GB
+# processors=4
+
+# ロケールホスト側との自動同期を有効化
+# localhostForwarding=true

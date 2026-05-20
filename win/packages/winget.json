@@ -1,0 +1,32 @@
+{
+    "$schema": "https://aka.ms/winget-packages.schema.2.0.json",
+    "Sources": [
+        {
+            "SourceDetails": {
+                "Argument": "https://cdn.winget.microsoft.com/cache",
+                "Identifier": "Microsoft.Winget.Source_8wekyb3d8bbwe",
+                "Name": "winget",
+                "Type": "Microsoft.PreIndexed.Package"
+            },
+            "Packages": [
+                { "PackageIdentifier": "ajeetdsouza.zoxide"               },
+                { "PackageIdentifier": "Anysphere.Cursor"                  },
+                { "PackageIdentifier": "DBeaver.DBeaver.Community"         },
+                { "PackageIdentifier": "Docker.DockerDesktop"              },
+                { "PackageIdentifier": "GitHub.cli"                        },
+                { "PackageIdentifier": "jdx.mise"                          },
+                { "PackageIdentifier": "GitHub.GitHubDesktop"             },
+                { "PackageIdentifier": "GoLang.Go"                         },
+                { "PackageIdentifier": "Google.Chrome.EXE"                 },
+                { "PackageIdentifier": "Google.JapaneseIME"                },
+                { "PackageIdentifier": "junegunn.fzf"                      },
+                { "PackageIdentifier": "Microsoft.PowerShell"              },
+                { "PackageIdentifier": "Microsoft.VisualStudioCode"        },
+                { "PackageIdentifier": "Microsoft.WindowsTerminal"         },
+                { "PackageIdentifier": "Microsoft.WSL"                     },
+                { "PackageIdentifier": "Telerik.Fiddler.Classic"           },
+                { "PackageIdentifier": "Zoom.Zoom.EXE"                     }
+            ]
+        }
+    ]
+}
