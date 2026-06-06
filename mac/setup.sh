@@ -43,7 +43,9 @@ fi
 
 # ── 2. Brewfile (パッケージ一括導入) ─────────────────────────────────────────
 step "brew bundle"
-brew bundle --file="$ROOT/mac/Brewfile"
+# 1 エントリの失敗 (例: VSCode 未導入時の拡張インストール) で
+# 以降の symlink ステップごと中断しないよう、失敗は警告に留める。
+brew bundle --file="$ROOT/mac/Brewfile" || yellow "一部パッケージのインストールに失敗しました (上のログを確認)。処理は継続します。"
 
 # ── 3. mise install (runtimes) ───────────────────────────────────────────────
 step "mise (runtimes)"
