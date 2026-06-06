@@ -60,6 +60,7 @@ brew bundle dump --file=mac/Brewfile --force
 
 ## 注意
 
-`mac/zsh/.zshrc` には conda / nvm / SDKMAN の初期化ブロックが含まれる (存在チェック付きなので
-未導入環境でも無害)。Node/Python のバージョンは本来 `mise` で固定するため、必要に応じて
-nvm / conda 由来の初期化を整理すること。
+- 対象は **Apple Silicon (arm64) のみ**。Homebrew は `/opt/homebrew` 前提。
+- Node / Python / Go のバージョン管理は **mise に一本化**している (`mise/config.toml`)。
+  nvm / conda 由来の初期化は `.zshrc` から除去済み。Java など mise 管理外のランタイムは
+  SDKMAN を併用する。
