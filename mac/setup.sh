@@ -48,8 +48,11 @@ step "brew bundle"
 brew bundle --file="$ROOT/mac/Brewfile" || yellow "一部パッケージのインストールに失敗しました (上のログを確認)。処理は継続します。"
 
 # ── 3. mise install (runtimes) ───────────────────────────────────────────────
+# install する前に global 設定を配置・trust しておく必要がある。
 step "mise (runtimes)"
 if command -v mise >/dev/null 2>&1; then
+  link "mise/config.toml" "$HOME/.config/mise/config.toml"
+  mise trust "$HOME/.config/mise/config.toml" >/dev/null 2>&1 || true
   mise install
 else
   yellow "mise が見つかりません。brew bundle 完了後に再度このスクリプトを実行してください。"
@@ -94,8 +97,7 @@ link "mac/micro/settings.json"   "$HOME/.config/micro/settings.json"
 link "mac/nvim/init.lua"         "$HOME/.config/nvim/init.lua"
 link "mac/nvim/lazy-lock.json"   "$HOME/.config/nvim/lazy-lock.json"
 
-# mise グローバル設定 (Windows と共有)
-link "mise/config.toml"          "$HOME/.config/mise/config.toml"
+# mise グローバル設定はステップ 3 で配置済み
 
 # Claude Code (Windows と共有)
 link "claude/CLAUDE.md"          "$HOME/.claude/CLAUDE.md"
