@@ -2,3 +2,8 @@
 go = "1.26.2"
 node = "24.14.1"
 python = "3.11.4"
+
+[settings]
+# python 3.11.4 (2023) は GitHub artifact attestation を持たないため検証を無効化。
+# チェックサム検証は引き続き有効。
+python.github_attestations = false

@@ -3,7 +3,7 @@
 	editor = code --wait
 	quotepath = false
 [user]
-	name = 三雲空楽
+	name = Sora Mikumo
 	email = your-personal-email@example.com  # TODO: 個人メールに変更
 [i18n]
 	commitencoding = utf-8
