@@ -1,0 +1,18 @@
+{
+    "colorscheme": "monokai",
+    "tabsize": 4,
+    "tabstospaces": true,
+    "autoindent": true,
+    "autosave": 0,
+    "savecursor": true,
+    "saveundo": true,
+    "scrollbar": true,
+    "ruler": true,
+    "softwrap": false,
+    "hlsearch": true,
+    "ignorecase": true,
+    "infobar": true,
+    "keymenu": false,
+    "mouse": true,
+    "encoding": "utf-8"
+}
