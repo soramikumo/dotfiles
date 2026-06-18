@@ -174,6 +174,20 @@ config.keys = {
 -- { key="c", mods="CMD", action=micro_cmd("c") },
 { key="a", mods="CMD", action=micro_cmd("a") },
 { key="f", mods="CMD", action=micro_cmd("f") },
+
+  -- Command+Shift+T → 現在のパスで新しいウィンドウを起動
+  {
+    key = "t",
+    mods = "CMD|SHIFT",
+    action = wezterm.action_callback(function(window, pane)
+      local cwd_uri = pane:get_current_working_dir()
+      local cwd = cwd_uri and cwd_uri.file_path or nil
+      window:perform_action(
+        wezterm.action.SpawnCommandInNewWindow { cwd = cwd },
+        pane
+      )
+    end),
+  },
 }
 
 return config
