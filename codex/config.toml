@@ -14,5 +14,13 @@ trust_level = "trusted"
 [projects."/Users/mikumo-sora/trip/german"]
 trust_level = "trusted"
 
+[projects."/Users/mikumo-sora/dev-self/agmsg"]
+trust_level = "trusted"
+
 [tui.model_availability_nux]
 "gpt-5.5" = 4
+
+[hooks.state]
+
+[hooks.state."/Users/mikumo-sora/dev-self/agmsg/.codex/hooks.json:session_start:0:0"]
+trusted_hash = "sha256:e519736bbc6b9e8d56d775c2f05427b4b57f587109f25bacdec88749217e995d"
