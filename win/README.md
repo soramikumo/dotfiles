@@ -39,6 +39,9 @@ cd $env:USERPROFILE\dotfiles\win
 | `claude/CLAUDE.md` | `~/.claude/CLAUDE.md` |
 | `claude/settings.json` | `~/.claude/settings.json` |
 | `claude/ccgate.jsonnet` | `~/.claude/ccgate.jsonnet` |
+| `codex/AGENTS.md` | `~/.codex/AGENTS.md` |
+| `codex/config.toml` | `~/.codex/config.toml` |
+| `codex/ccgate.jsonnet` | `~/.codex/ccgate.jsonnet` |
 
 ## 動作確認 (Windows Sandbox)
 

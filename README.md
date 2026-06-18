@@ -7,6 +7,7 @@
 | ディレクトリ | 内容 |
 |---|---|
 | `claude/` | Claude Code の設定 (`CLAUDE.md` / `settings.json` / `ccgate.jsonnet`) ※ macOS / Windows 共有 |
+| `codex/` | Codex の設定 (`AGENTS.md` / `config.toml` / `ccgate.jsonnet`) ※ macOS / Windows 共有 |
 | `mise/` | [mise](https://mise.jdx.dev/) のグローバル設定 (Node.js / Python / Go などのバージョン管理) ※ macOS / Windows 共有 |
 | `mac/` | macOS 環境のセットアップ一式 (詳細は [`mac/README.md`](mac/README.md)) |
 | `win/` | Windows 環境のセットアップ一式 (詳細は [`win/README.md`](win/README.md)) |

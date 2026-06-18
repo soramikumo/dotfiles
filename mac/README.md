@@ -43,13 +43,16 @@ cd ~/dev-self/private-repo/dotfiles/mac
 | `claude/CLAUDE.md` | `~/.claude/CLAUDE.md` |
 | `claude/settings.json` | `~/.claude/settings.json` |
 | `claude/ccgate.jsonnet` | `~/.claude/ccgate.jsonnet` |
+| `codex/AGENTS.md` | `~/.codex/AGENTS.md` |
+| `codex/config.toml` | `~/.codex/config.toml` |
+| `codex/ccgate.jsonnet` | `~/.codex/ccgate.jsonnet` |
 
 ## secrets (環境変数)
 
 機密値はリポジトリに含めず `~/.config/secrets.env` に置く (`.gitignore` 対象)。
 雛形は [`mac/secrets.env.example`](secrets.env.example)。`.zprofile` / `.zshrc` がこれを `source` する。
 
-- `OPENAI_API_KEY` — ccgate (Claude Code の `PermissionRequest` フック) が使用
+- `OPENAI_API_KEY` — ccgate (Claude Code / Codex の `PermissionRequest` フック) が使用
 
 ## パッケージの更新
 

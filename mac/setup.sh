@@ -104,6 +104,11 @@ link "claude/CLAUDE.md"          "$HOME/.claude/CLAUDE.md"
 link "claude/settings.json"      "$HOME/.claude/settings.json"
 link "claude/ccgate.jsonnet"     "$HOME/.claude/ccgate.jsonnet"
 
+# Codex (Windows と共有)
+link "codex/AGENTS.md"           "$HOME/.codex/AGENTS.md"
+link "codex/config.toml"         "$HOME/.codex/config.toml"
+link "codex/ccgate.jsonnet"      "$HOME/.codex/ccgate.jsonnet"
+
 # ── 6. secrets ───────────────────────────────────────────────────────────────
 step "secrets"
 if [ ! -f "$HOME/.config/secrets.env" ]; then
