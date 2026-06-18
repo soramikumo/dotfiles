@@ -128,4 +128,9 @@ Link "claude\CLAUDE.md"           "%USERPROFILE%\.claude\CLAUDE.md"
 Link "claude\settings.json"       "%USERPROFILE%\.claude\settings.json"
 Link "claude\ccgate.jsonnet"      "%USERPROFILE%\.claude\ccgate.jsonnet"
 
+# Codex
+Link "codex\AGENTS.md"            "%USERPROFILE%\.codex\AGENTS.md"
+Link "codex\config.toml"          "%USERPROFILE%\.codex\config.toml"
+Link "codex\ccgate.jsonnet"       "%USERPROFILE%\.codex\ccgate.jsonnet"
+
 Write-Host "`nDone! ターミナルを再起動してください。" -ForegroundColor Cyan

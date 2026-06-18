@@ -1,26 +1,43 @@
 tap "hashicorp/tap"
+# Official Amazon AWS command-line interface
 brew "awscli"
+# Microsoft Azure CLI 2.0
 brew "azure-cli"
+# Python code formatter
 brew "black"
+# Command-line fuzzy finder written in Go
 brew "fzf"
+# GitHub command-line tool
 brew "gh"
+# Quickly rewrite git repository history
 brew "git-filter-repo"
+# Lightweight and flexible command-line JSON processor
 brew "jq"
+# Handy way to save and run project-specific commands
 brew "just"
+# Simple terminal UI for git commands
 brew "lazygit"
+# Modern and intuitive terminal-based text editor
 brew "micro"
+# Polyglot runtime manager (asdf rust clone)
 brew "mise"
-brew "mysql@8.0", link: true
+# Open source relational database management system
+brew "mysql"
+# Ambitious Vim-fork focused on extensibility and agility
 brew "neovim"
+# Cross-shell prompt for astronauts
 brew "starship"
+# Terminal multiplexer
 brew "tmux"
+# Shell extension to navigate your filesystem faster
 brew "zoxide"
+# Fish-like fast/unobtrusive autosuggestions for zsh
 brew "zsh-autosuggestions"
-brew "hashicorp/tap/terraform"
+# Data management tool that enables working with SQL Server
 cask "azure-data-studio"
-cask "codex"
+# Monitoring and security across systems, apps, and services
 cask "datadog-agent"
-cask "visual-studio-code"
+# GPU-accelerated cross-platform terminal emulator and multiplexer
 cask "wezterm"
 vscode "aaron-bond.better-comments"
 vscode "anthropic.claude-code"
@@ -34,7 +51,6 @@ vscode "ecmel.vscode-html-css"
 vscode "formulahendry.auto-rename-tag"
 vscode "formulahendry.code-runner"
 vscode "genieai.chatgpt-vscode"
-vscode "github.copilot-chat"
 vscode "golang.go"
 vscode "hashicorp.terraform"
 vscode "hediet.vscode-drawio"
@@ -81,10 +97,6 @@ vscode "vue.volar"
 vscode "wayou.vscode-todo-highlight"
 vscode "wingrunr21.vscode-ruby"
 vscode "woodreamz.es7-react-js-snippets"
-go "github.com/go-delve/delve/cmd/dlv"
-go "golang.org/x/tools/gopls"
-go "honnef.co/go/tools/cmd/staticcheck"
-npm "@anthropic-ai/claude-code"
-npm "@google/gemini-cli"
-npm "azure-functions-core-tools"
+go "cmd/go"
+go "cmd/gofmt"
 npm "corepack"
