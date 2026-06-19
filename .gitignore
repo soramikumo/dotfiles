@@ -3,6 +3,12 @@ secrets.env
 **/secrets.env
 *.local
 
+# 環境変数ファイル(Grafana Cloud トークン等) と 一時/ローカル専用スクリプト
+.env
+**/.env
+*.local.ps1
+**/*.local.ps1
+
 # Claude Code - exclude ephemeral state
 claude/history.jsonl
 claude/sessions/
