@@ -1,0 +1,14 @@
+<Configuration>
+  <MappedFolders>
+    <MappedFolder>
+      <!-- dotfiles をサンドボックス内にマウント (読み取り専用) -->
+      <HostFolder>C:\Users\Mikumo\dev\dotfiles</HostFolder>
+      <SandboxFolder>C:\dotfiles</SandboxFolder>
+      <ReadOnly>true</ReadOnly>
+    </MappedFolder>
+  </MappedFolders>
+  <LogonCommand>
+    <!-- 起動直後に setup.ps1 を管理者として実行 -->
+    <Command>powershell -ExecutionPolicy Bypass -File C:\dotfiles\win\setup.ps1</Command>
+  </LogonCommand>
+</Configuration>
