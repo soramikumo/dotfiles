@@ -4,6 +4,7 @@ model_reasoning_effort = "xhigh"
 # Full-access local default. Codex does not stop for approval prompts.
 sandbox_mode = "danger-full-access"
 approval_policy = "never"
+service_tier = "default"
 
 [projects."/Users/mikumo-sora/dev-self/e2e-tr"]
 trust_level = "trusted"
