@@ -1,78 +1,87 @@
-# observability — Claude Code を Grafana で可視化
+# observability — Claude Code を Grafana Cloud で可視化（直接送信・Docker不要）
 
-Claude Code の利用状況（トークン・コスト・セッション・変更行数など）を、
-**完全ローカル・無料**で可視化するスタック。データは一切外部に出ない。
+Claude Code の利用状況（コスト・トークン・セッション・変更行数など）を OpenTelemetry で
+**Grafana Cloud に直接送信**して可視化する。ローカルに常駐プロセス（Docker / Collector）は不要。
 
 ```
-Claude Code ──OTLP/gRPC:4317──▶ OTel Collector ──:8889──▶ Prometheus ──▶ Grafana(:3000)
- settings.jsonでON               (受信→Prom形式に変換)      (保存)        (可視化)
+Claude Code ──OTLP http/protobuf──▶ Grafana Cloud (OTLP gateway) ──▶ Mimir(メトリクス) ──▶ Grafana で可視化
+ ~/.claude/settings.json の env で設定
 ```
 
-記事の Grafana Cloud 連携と違い、Grafana / Prometheus / Collector をすべて
-自分の PC の Docker 上で動かす。ライセンスはすべて OSS なので追加課金ゼロ。
+## 仕組みと「接続文字列（トークン）」の置き場所
 
-## 前提
+- 送信設定（エンドポイント・認証ヘッダ）は **`~/.claude/settings.json` の `env`** に書く。
+- この `settings.json` は **dotfiles リポジトリの外（実体コピー）** なので、**トークンは git に入らない**。
+- リポジトリには「設定を生成するスクリプト」(`set-grafana-cloud.ps1`) と
+  「ダッシュボード定義」(`grafana/dashboards/claude-code-cloud.json`) だけを置く。
 
-- Docker Desktop が起動していること
-- Claude Code のテレメトリは `claude/settings.json` の `env` で有効化済み
-  （`~/.claude/settings.json` にシンボリックリンクされている前提）
+> `~/.claude/settings.json` は dotfiles への symlink ではなく**コピー**。dotfiles を更新しても
+> 自動反映されないので、設定変更時はこのスクリプトを実行し直す。
 
-## 起動
+## セットアップ
+
+### 1. Grafana Cloud の OTLP 接続情報を取得
+
+Grafana Cloud → **Connections → OpenTelemetry (OTLP)** で以下を控える：
+
+- **Endpoint**（例: `https://otlp-gateway-prod-ap-northeast-0.grafana.net/otlp`）
+- `Authorization: Basic <base64>` の **base64 部分**（= `<instanceID>:<アクセスポリシートークン>` を base64 化したもの）
+
+### 2. settings.json に設定を流し込む
 
 ```powershell
-cd $env:USERPROFILE\dotfiles\observability
-docker compose up -d
+pwsh -NoProfile -File set-grafana-cloud.ps1 `
+  -Endpoint "https://otlp-gateway-prod-ap-northeast-0.grafana.net/otlp" `
+  -AuthB64  "<Basic の後ろの base64>"
 ```
 
-初回はイメージ取得で数分かかる。立ち上がったら：
+`-InstanceId` と `-Token` を個別に渡す／引数なしで対話入力も可（詳細はスクリプト冒頭のコメント参照）。
+このスクリプトが `~/.claude/settings.json` の `env` に以下を書き込む：
 
-| URL | 用途 |
-|---|---|
-| http://localhost:3000 | Grafana（ログイン不要・匿名 Admin）。ダッシュボード「Claude Code Usage」が自動表示 |
-| http://localhost:9090 | Prometheus UI（メトリクスの生確認・PromQL お試し） |
-| http://localhost:8889/metrics | Collector が公開している生メトリクス |
-
-その後、**Claude Code を新しく起動**すれば（`OTEL_METRIC_EXPORT_INTERVAL=10000` なので）
-約10秒間隔でメトリクスが流れ始める。Grafana のダッシュボードは10秒ごとに自動更新。
-
-## 停止 / 後始末
-
-```powershell
-docker compose down            # コンテナ停止（メトリクスは volume に残る）
-docker compose down -v         # volume ごと削除（データも消す）
-```
-
-## エクスポートされる主なメトリクス
-
-Collector で `add_metric_suffixes: false` にしているので、Prometheus 上の名前は予測可能：
-
-| Prometheus 名 | 内容 | 単位 |
+| 変数 | 値 | 役割 |
 |---|---|---|
-| `claude_code_cost_usage` | セッションのコスト | USD |
-| `claude_code_token_usage` | トークン使用量 | tokens |
-| `claude_code_session_count` | セッション数 | count |
-| `claude_code_lines_of_code_count` | 変更行数 | count |
-| `claude_code_commit_count` | コミット数 | count |
-| `claude_code_pull_request_count` | PR 数 | count |
-| `claude_code_active_time_total` | アクティブ時間 | 秒 |
-| `claude_code_code_edit_tool_decision` | 編集ツールの許可判断 | count |
+| `CLAUDE_CODE_ENABLE_TELEMETRY` | `1` | テレメトリ有効化 |
+| `OTEL_METRICS_EXPORTER` | `otlp` | OTLP で送信 |
+| `OTEL_EXPORTER_OTLP_PROTOCOL` | `http/protobuf` | **Cloud は gRPC 不可** |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | (上記 Endpoint) | 送信先 |
+| `OTEL_EXPORTER_OTLP_HEADERS` | `Authorization=Basic <b64>` | Basic 認証 |
+| `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE` | `cumulative` | **これが無いと HTTP 400**（後述） |
+| `OTEL_METRIC_EXPORT_INTERVAL` | `60000` | 送信間隔(ms) |
 
-## トラブルシュート
+### 3. Claude Code を再起動
 
-**Grafana にデータが出ない**
-1. `docker compose logs otel-collector` に Claude Code からの受信ログが出ているか確認
-2. http://localhost:9090/targets で `otel-collector` が UP か確認
-3. Claude Code を起動し直したか（env は新規セッションから反映）
-4. http://localhost:9090 で `claude_code_token_usage` を検索してデータが入っているか確認
+`env` は**新しいセッション起動時**に読まれる。起動して少し使うと、約60秒間隔でメトリクスが流れ始める。
 
-**メトリクス名やラベルが想定と違うとき**
-- Grafana 左メニュー → Explore → Prometheus を選び、`claude_code_` と打つと
-  実際に存在するメトリクス名が補完される。ラベル（`type` / `model` など）もここで確認できる。
-  ダッシュボードの PromQL はこの名前に合わせて調整する。
+### 4. ダッシュボードをインポート
+
+Grafana Cloud → **Dashboards → New → Import** で `grafana/dashboards/claude-code-cloud.json`
+を読み込む。データソースは Prometheus 系（`grafanacloud-xxx-prom`）を選ぶ。
+
+## ハマりどころ（重要）
+
+- **temporality（真因）**: Claude Code は一部メトリクスを **delta** で送るが、Grafana Cloud(Mimir) は
+  **cumulative しか受け付けず HTTP 400 で弾く**。しかも Claude 側はエラーを**沈黙して捨てる**ため
+  「設定したのにデータが来ない」になりがち。→ `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=cumulative`
+  で解決（スクリプトが自動設定）。
+- **メトリクス名**: Mimir はサフィックスを付ける（`claude_code_token_usage_tokens_total`,
+  `claude_code_cost_usage_USD_total` など）。ダッシュボードJSONはこのクラウド名に合わせてある。
+- **認証ヘッダの空白**: `Basic%20...` の `%20` は URL エンコードされた空白。SDK が decode しないと壊れる。
+  スクリプトは**本物の半角スペース**で書き込む。
+
+## 確認方法
+
+Grafana Cloud → **Explore**（Prometheus データソース）で `claude_code_` と打つと、
+入っているメトリクス名が補完される。ラベル（`type` / `model` など）もここで確認できる。
+
+## 含まれるファイル
+
+| パス | 役割 |
+|---|---|
+| `set-grafana-cloud.ps1` | `~/.claude/settings.json` に送信設定を書き込む（トークン非埋め込み・再実行安全） |
+| `grafana/dashboards/claude-code-cloud.json` | クラウド用ダッシュボード定義（インポート用） |
 
 ## メモ
 
-- `OTEL_METRIC_EXPORT_INTERVAL=10000`（10秒）は動作確認用に短くしてある。
-  常用するなら `claude/settings.json` で `60000`（デフォルト）に戻すと負荷が減る。
-- ログ(Loki)・トレース(Tempo)は未導入。次のステップで Collector の pipeline と
-  compose にサービスを足せば拡張できる。
+- トークンを共有・露出したら、Grafana Cloud の **Access Policies で revoke** する。
+- ログ(Loki) / トレース(Tempo) は未導入。`OTEL_LOGS_EXPORTER=otlp` を足せば同じゲートウェイ経由で
+  Loki にログも送れるが、単独利用ではノイズが多いので本構成では入れていない。
