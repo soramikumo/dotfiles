@@ -20,7 +20,7 @@
   # --- ユーザー + 公開鍵 ---
   users.users.sora = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ];
+    extraGroups = [ "wheel" "docker" ]; # docker は sudo 無しで docker コマンドを使うため
     # コンソール用パスワードは git に置かない。VM 上で `sudo passwd sora` で設定。
     # SSH は鍵のみ(PasswordAuthentication = false)なので、これが無くても普段は困らない。
     openssh.authorizedKeys.keys = [
@@ -38,6 +38,18 @@
 
   # --- VMware ゲスト連携 ---
   virtualisation.vmware.guest.enable = true;
+
+  # --- Docker(コンテナ基盤) ---
+  virtualisation.docker.enable = true;
+
+  # --- L3 動作確認用: nginx hello-world コンテナ(宣言的に常駐) ---
+  virtualisation.oci-containers = {
+    backend = "docker";
+    containers.hello = {
+      image = "nginx:alpine";
+      ports = [ "8080:80" ];
+    };
+  };
 
   system.stateVersion = "26.05";
 }
