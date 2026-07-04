@@ -104,6 +104,17 @@ link "claude/CLAUDE.md"          "$HOME/.claude/CLAUDE.md"
 link "claude/settings.json"      "$HOME/.claude/settings.json"
 link "claude/ccgate.jsonnet"     "$HOME/.claude/ccgate.jsonnet"
 
+# Claude Code skills / commands (Windows と共有)
+# スキルは個別リンク: dotfiles 管理外のスキル (別リポジトリへの symlink 等) と共存できるようにする
+for d in "$ROOT"/claude/skills/*/; do
+  [ -d "$d" ] || continue
+  link "claude/skills/$(basename "$d")" "$HOME/.claude/skills/$(basename "$d")"
+done
+for f in "$ROOT"/claude/commands/*.md; do
+  [ -f "$f" ] || continue
+  link "claude/commands/$(basename "$f")" "$HOME/.claude/commands/$(basename "$f")"
+done
+
 # Codex (Windows と共有)
 link "codex/AGENTS.md"           "$HOME/.codex/AGENTS.md"
 link "codex/config.toml"         "$HOME/.codex/config.toml"

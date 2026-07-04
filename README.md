@@ -6,11 +6,12 @@
 
 | ディレクトリ | 内容 |
 |---|---|
-| `claude/` | Claude Code の設定 (`CLAUDE.md` / `settings.json` / `ccgate.jsonnet`) ※ macOS / Windows 共有 |
+| `claude/` | Claude Code の設定 (`CLAUDE.md` / `settings.json` / `ccgate.jsonnet` / `skills/` / `commands/`) ※ macOS / Windows 共有。別リポジトリ管理のスキル (`goal-run` / `grill-me`) は含まない |
 | `codex/` | Codex の設定 (`AGENTS.md` / `config.toml` / `ccgate.jsonnet`) ※ macOS / Windows 共有 |
 | `mise/` | [mise](https://mise.jdx.dev/) のグローバル設定 (Node.js / Python / Go などのバージョン管理) ※ macOS / Windows 共有 |
 | `mac/` | macOS 環境のセットアップ一式 (詳細は [`mac/README.md`](mac/README.md)) |
 | `win/` | Windows 環境のセットアップ一式 (詳細は [`win/README.md`](win/README.md)) |
+| `observability/` | Claude Code の利用状況を Grafana Cloud で可視化する設定 (詳細は [`observability/README.md`](observability/README.md)) ※ macOS / Windows 共有 |
 
 ## macOS セットアップ
 

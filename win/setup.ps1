@@ -128,6 +128,15 @@ Link "claude\CLAUDE.md"           "%USERPROFILE%\.claude\CLAUDE.md"
 Link "claude\settings.json"       "%USERPROFILE%\.claude\settings.json"
 Link "claude\ccgate.jsonnet"      "%USERPROFILE%\.claude\ccgate.jsonnet"
 
+# Claude Code skills / commands
+# スキルは個別リンク: dotfiles 管理外のスキルと共存できるようにする
+Get-ChildItem "$root\claude\skills" -Directory | ForEach-Object {
+    Link "claude\skills\$($_.Name)" "%USERPROFILE%\.claude\skills\$($_.Name)"
+}
+Get-ChildItem "$root\claude\commands" -File | ForEach-Object {
+    Link "claude\commands\$($_.Name)" "%USERPROFILE%\.claude\commands\$($_.Name)"
+}
+
 # Codex
 Link "codex\AGENTS.md"            "%USERPROFILE%\.codex\AGENTS.md"
 Link "codex\config.toml"          "%USERPROFILE%\.codex\config.toml"

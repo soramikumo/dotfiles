@@ -1,32 +1,66 @@
 {
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+    "OTEL_METRICS_EXPORTER": "otlp",
+    "OTEL_EXPORTER_OTLP_PROTOCOL": "http/protobuf",
+    "OTEL_EXPORTER_OTLP_ENDPOINT": "https://otlp-gateway-prod-ap-northeast-0.grafana.net/otlp",
+    "OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE": "cumulative",
+    "OTEL_METRIC_EXPORT_INTERVAL": "60000",
+    "OTEL_LOGS_EXPORTER": "otlp",
+    "OTEL_LOGS_EXPORT_INTERVAL": "5000",
+    "OTEL_LOG_TOOL_DETAILS": "1"
+  },
   "permissions": {
     "allow": [
-      "Bash(*)",
-      "Bash(*)",
-      "Write(*)",
-      "Edit(*)",
-      "WebFetch",
-      "Bash(git push:*)"
-    ],
-    "deny": [
-      "Bash(dd:*)",
-      "Bash(mkfs:*)",
-      "Read(**/.env)",
-      "Read(**/secrets/**)",
-      "Read(**/config/**)"
-    ],
-    "ask": [
-      "Bash(rm:*)",
+      "Edit(**)",
+      "Write(**)",
       "Bash(git rebase:*)",
       "Bash(chmod:*)",
       "Bash(chown:*)",
       "Bash(curl:*)",
-      "Bash(wget:*)"
-    ]
+      "Bash(wget:*)",
+      "Bash(gh *)",
+      "Bash(docker exec:*)",
+      "Bash(docker compose up:*)",
+      "Bash(docker compose build:*)",
+      "Bash(docker compose exec:*)",
+      "Bash(docker compose ps:*)",
+      "Bash(docker compose logs:*)",
+      "WebFetch(domain:octomind.dev)",
+      "WebFetch(domain:docs.octomind.dev)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:docs.github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:developer.mozilla.org)",
+      "WebFetch(domain:nextjs.org)",
+      "WebFetch(domain:react.dev)",
+      "WebFetch(domain:playwright.dev)",
+      "WebFetch(domain:pkg.go.dev)",
+      "WebFetch(domain:go.dev)",
+      "WebFetch(domain:nodejs.org)",
+      "WebFetch(domain:typescriptlang.org)",
+      "WebFetch(domain:web.dev)",
+      "WebFetch(domain:vercel.com)",
+      "WebFetch(domain:stackoverflow.com)",
+      "Bash(*)",
+      "Write(*)",
+      "Edit(*)",
+      "WebFetch",
+      "Bash(git push:*)",
+      "Bash(ssh:*)",
+      "Bash(scp:*)",
+      "Bash(ssh-keygen:*)",
+      "Bash(ssh-copy-id:*)",
+      "mcp__claude-in-chrome__*"
+    ],
+    "deny": [],
+    "ask": []
   },
+  "model": "claude-fable-5[1m]",
   "hooks": {
     "PermissionRequest": [
       {
+        "matcher": "",
         "hooks": [
           {
             "type": "command",
@@ -37,8 +71,23 @@
     ]
   },
   "enabledPlugins": {
-    "gopls-lsp@claude-plugins-official": true
+    "uxaudit@gotalab-uxaudit": true
   },
+  "extraKnownMarketplaces": {
+    "gotalab-uxaudit": {
+      "source": {
+        "source": "github",
+        "repo": "gotalab/uxaudit"
+      }
+    }
+  },
+  "outputStyle": "default",
+  "effortLevel": "high",
+  "advisorModel": "opus",
+  "tui": "fullscreen",
+  "skipWorkflowUsageWarning": true,
+  "theme": "dark-daltonized",
+  "verbose": true,
   "interaction": {
     "confirmationMode": "minimal"
   }
