@@ -1,6 +1,7 @@
 [tools]
 go = "1.26.2"
 node = "24.14.1"
+"npm:@openai/codex" = "latest"
 python = "3.11.4"
 
 [settings]

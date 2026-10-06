@@ -1,6 +1,24 @@
 local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 
+----------------------------------------------------
+-- resurrect.wezterm : セッション(タブ/ペイン/cwd)の保存・復元
+-- ※ 初回起動時のみ GitHub からプラグインを clone するため要ネット接続
+----------------------------------------------------
+local resurrect = wezterm.plugin.require("https://github.com/MLFlexer/resurrect.wezterm")
+
+-- 5分ごとに自動保存
+resurrect.state_manager.periodic_save({
+  interval_seconds = 300,
+  save_workspaces = true,
+  save_windows = true,
+  save_tabs = true,
+})
+
+-- 起動時に直近のワークスペースを自動復元
+-- (毎回復元されるのが邪魔なら次の1行をコメントアウトし、Alt+r の手動復元だけ使う)
+wezterm.on("gui-startup", resurrect.state_manager.resurrect_on_gui_startup)
+
 config.automatically_reload_config = true
 config.font_size = 14.0
 config.use_ime = true
@@ -186,6 +204,57 @@ config.keys = {
         wezterm.action.SpawnCommandInNewWindow { cwd = cwd },
         pane
       )
+    end),
+  },
+
+  ----------------------------------------------------
+  -- resurrect : 保存 / 復元
+  ----------------------------------------------------
+  -- Alt+w : 今のワークスペース全体を保存
+  {
+    key = "w",
+    mods = "ALT",
+    action = wezterm.action_callback(function(win, pane)
+      resurrect.state_manager.save_state(resurrect.workspace_state.get_workspace_state())
+    end),
+  },
+  -- Alt+W : 今のウィンドウを保存
+  {
+    key = "W",
+    mods = "ALT",
+    action = resurrect.window_state.save_window_action(),
+  },
+  -- Alt+T : 今のタブを保存
+  {
+    key = "T",
+    mods = "ALT",
+    action = resurrect.tab_state.save_tab_action(),
+  },
+  -- Alt+r : 保存済み state を一覧から選んで復元
+  {
+    key = "r",
+    mods = "ALT",
+    action = wezterm.action_callback(function(win, pane)
+      resurrect.fuzzy_loader.fuzzy_load(win, pane, function(id, label)
+        local state_type = string.match(id, "^([^/]+)")
+        id = string.match(id, "([^/]+)$")
+        id = string.match(id, "(.+)%..+$")
+        local opts = {
+          relative = true,
+          restore_text = true,
+          on_pane_restore = resurrect.tab_state.default_on_pane_restore,
+        }
+        if state_type == "workspace" then
+          local state = resurrect.state_manager.load_state(id, "workspace")
+          resurrect.workspace_state.restore_workspace(state, opts)
+        elseif state_type == "window" then
+          local state = resurrect.state_manager.load_state(id, "window")
+          resurrect.window_state.restore_window(pane:window(), state, opts)
+        elseif state_type == "tab" then
+          local state = resurrect.state_manager.load_state(id, "tab")
+          resurrect.tab_state.restore_tab(pane:tab(), state, opts)
+        end
+      end)
     end),
   },
 }
