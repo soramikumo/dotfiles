@@ -139,7 +139,21 @@ Get-ChildItem "$root\claude\commands" -File | ForEach-Object {
 
 # Codex
 Link "codex\AGENTS.md"            "%USERPROFILE%\.codex\AGENTS.md"
-Link "codex\config.toml"          "%USERPROFILE%\.codex\config.toml"
 Link "codex\ccgate.jsonnet"       "%USERPROFILE%\.codex\ccgate.jsonnet"
+
+# Codex config は Grafana 認証を含む場合だけローカル実体になる。
+$codexConfig = [System.Environment]::ExpandEnvironmentVariables("%USERPROFILE%\.codex\config.toml")
+$hasGrafanaAuth = $env:CODEX_GRAFANA_CLOUD_AUTHORIZATION -or $env:GRAFANA_CLOUD_OTLP_HEADERS
+$hasLocalGrafanaConfig = (Test-Path $codexConfig) -and
+    -not ((Get-Item $codexConfig -Force).LinkType -eq "SymbolicLink") -and
+    (Select-String -Path $codexConfig -SimpleMatch '# BEGIN dotfiles: codex Grafana Cloud OTLP (managed)' -Quiet)
+if ($hasGrafanaAuth) {
+    Link "codex\config.toml" "%USERPROFILE%\.codex\config.toml"
+    & "$root\observability\set-codex-grafana.ps1"
+} elseif ($hasLocalGrafanaConfig) {
+    Write-Host "  skip   $codexConfig (local Grafana credentials configured)" -ForegroundColor DarkGray
+} else {
+    Link "codex\config.toml" "%USERPROFILE%\.codex\config.toml"
+}
 
 Write-Host "`nDone! ターミナルを再起動してください。" -ForegroundColor Cyan

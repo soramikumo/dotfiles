@@ -38,7 +38,7 @@ $j | Add-Member -NotePropertyName env -NotePropertyValue ([pscustomobject]@{
   OTEL_METRICS_EXPORTER        = 'otlp'
   OTEL_EXPORTER_OTLP_PROTOCOL  = 'http/protobuf'                 # クラウドは gRPC 不可
   OTEL_EXPORTER_OTLP_ENDPOINT  = $Endpoint
-  OTEL_EXPORTER_OTLP_HEADERS   = "Authorization=Basic $AuthB64"  # 本物の半角スペース（%20地雷回避）
+  GRAFANA_CLOUD_OTLP_HEADERS   = "Authorization=Basic $AuthB64"  # 本物の半角スペース（%20地雷回避）
   OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE = 'cumulative'  # delta→cumulative 強制（無いと Mimir が HTTP 400）
   OTEL_METRIC_EXPORT_INTERVAL  = '60000'
 }) -Force

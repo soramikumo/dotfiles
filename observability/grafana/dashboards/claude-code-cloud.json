@@ -1,7 +1,7 @@
 {
   "uid": "claude-code-cloud",
-  "title": "Claude Code Usage (Cloud)",
-  "tags": ["claude-code", "otel", "grafana-cloud"],
+  "title": "Claude Code + Codex Usage (Cloud)",
+  "tags": ["claude-code", "codex", "otel", "grafana-cloud"],
   "timezone": "browser",
   "schemaVersion": 39,
   "version": 1,
@@ -85,6 +85,80 @@
       "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "bars", "lineWidth": 1, "fillOpacity": 50, "showPoints": "never" } }, "overrides": [] },
       "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "single", "sort": "none" } },
       "targets": [ { "refId": "A", "datasource": { "type": "prometheus", "uid": "${datasource}" }, "editorMode": "code", "expr": "sum(increase(claude_code_active_time_seconds_total[5m]))", "legendFormat": "active / 5m" } ]
+    },
+    {
+      "id": 9, "type": "row", "title": "Codex (Loki)",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 20 },
+      "panels": []
+    },
+    {
+      "id": 10, "type": "stat", "title": "Codex 総トークン (期間内)",
+      "datasource": { "type": "loki", "uid": "grafanacloud-logs" },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 21 },
+      "fieldConfig": { "defaults": { "unit": "short", "decimals": 0, "color": { "mode": "fixed", "fixedColor": "blue" } }, "overrides": [] },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "colorMode": "value", "graphMode": "area", "textMode": "auto", "justifyMode": "auto" },
+      "targets": [
+        { "refId": "A", "datasource": { "type": "loki", "uid": "grafanacloud-logs" }, "editorMode": "code", "queryType": "range", "expr": "sum(sum_over_time({service_name=~\"codex.*|Codex.*\"} | event_kind=\"response.completed\" | unwrap input_token_count [$__range]))", "legendFormat": "input", "hide": true },
+        { "refId": "B", "datasource": { "type": "loki", "uid": "grafanacloud-logs" }, "editorMode": "code", "queryType": "range", "expr": "sum(sum_over_time({service_name=~\"codex.*|Codex.*\"} | event_kind=\"response.completed\" | unwrap output_token_count [$__range]))", "legendFormat": "output", "hide": true },
+        { "refId": "C", "datasource": { "type": "__expr__", "uid": "__expr__" }, "type": "math", "expression": "$A + $B" }
+      ]
+    },
+    {
+      "id": 11, "type": "stat", "title": "Codex 参考コスト (¥・期間内)",
+      "description": "GPT-5.5 Standard API相当。入力 $5 / cached入力 $0.50 / 出力 $30（各100万token）、1 USD = ¥160で換算。ChatGPT契約の実請求額ではありません。長文コンテキストの追加倍率は未反映です。",
+      "datasource": { "type": "loki", "uid": "grafanacloud-logs" },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 21 },
+      "fieldConfig": { "defaults": { "unit": "currencyJPY", "unitScale": false, "decimals": 0, "color": { "mode": "fixed", "fixedColor": "green" } }, "overrides": [] },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "colorMode": "value", "graphMode": "area", "textMode": "auto", "justifyMode": "auto" },
+      "targets": [
+        { "refId": "A", "datasource": { "type": "loki", "uid": "grafanacloud-logs" }, "editorMode": "code", "queryType": "range", "expr": "sum(sum_over_time({service_name=~\"codex.*|Codex.*\"} | event_kind=\"response.completed\" | unwrap input_token_count [$__range]))", "legendFormat": "input", "hide": true },
+        { "refId": "B", "datasource": { "type": "loki", "uid": "grafanacloud-logs" }, "editorMode": "code", "queryType": "range", "expr": "sum(sum_over_time({service_name=~\"codex.*|Codex.*\"} | event_kind=\"response.completed\" | unwrap cached_token_count [$__range]))", "legendFormat": "cached", "hide": true },
+        { "refId": "C", "datasource": { "type": "loki", "uid": "grafanacloud-logs" }, "editorMode": "code", "queryType": "range", "expr": "sum(sum_over_time({service_name=~\"codex.*|Codex.*\"} | event_kind=\"response.completed\" | unwrap output_token_count [$__range]))", "legendFormat": "output", "hide": true },
+        { "refId": "D", "datasource": { "type": "__expr__", "uid": "__expr__" }, "type": "math", "expression": "(($A * 5 - $B * 4.5 + $C * 30) / 1000000) * 160" }
+      ]
+    },
+    {
+      "id": 12, "type": "stat", "title": "Codex セッション数 (期間内)",
+      "datasource": { "type": "loki", "uid": "grafanacloud-logs" },
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 21 },
+      "fieldConfig": { "defaults": { "unit": "short", "decimals": 0, "color": { "mode": "fixed", "fixedColor": "purple" } }, "overrides": [] },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "colorMode": "value", "graphMode": "area", "textMode": "auto", "justifyMode": "auto" },
+      "targets": [ { "refId": "A", "datasource": { "type": "loki", "uid": "grafanacloud-logs" }, "editorMode": "code", "queryType": "instant", "expr": "count(sum by (conversation_id) (count_over_time({service_name=~\"codex.*|Codex.*\"}[$__range])))", "legendFormat": "sessions" } ]
+    },
+    {
+      "id": 13, "type": "stat", "title": "Codex イベント数 (期間内)",
+      "datasource": { "type": "loki", "uid": "grafanacloud-logs" },
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 21 },
+      "fieldConfig": { "defaults": { "unit": "short", "decimals": 0, "color": { "mode": "fixed", "fixedColor": "orange" } }, "overrides": [] },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "colorMode": "value", "graphMode": "area", "textMode": "auto", "justifyMode": "auto" },
+      "targets": [ { "refId": "A", "datasource": { "type": "loki", "uid": "grafanacloud-logs" }, "editorMode": "code", "queryType": "instant", "expr": "sum(count_over_time({service_name=~\"codex.*|Codex.*\"}[$__range]))", "legendFormat": "events" } ]
+    },
+    {
+      "id": 14, "type": "timeseries", "title": "Codex トークン使用量",
+      "datasource": { "type": "loki", "uid": "grafanacloud-logs" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 25 },
+      "fieldConfig": { "defaults": { "unit": "short", "custom": { "drawStyle": "line", "lineWidth": 1, "fillOpacity": 20, "showPoints": "never", "stacking": { "mode": "normal", "group": "A" } } }, "overrides": [] },
+      "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["sum"] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [
+        { "refId": "A", "datasource": { "type": "loki", "uid": "grafanacloud-logs" }, "editorMode": "code", "queryType": "range", "expr": "sum(sum_over_time({service_name=~\"codex.*|Codex.*\"} | event_kind=\"response.completed\" | unwrap input_token_count [$__interval]))", "legendFormat": "input" },
+        { "refId": "B", "datasource": { "type": "loki", "uid": "grafanacloud-logs" }, "editorMode": "code", "queryType": "range", "expr": "sum(sum_over_time({service_name=~\"codex.*|Codex.*\"} | event_kind=\"response.completed\" | unwrap output_token_count [$__interval]))", "legendFormat": "output" }
+      ]
+    },
+    {
+      "id": 15, "type": "timeseries", "title": "Codex イベント推移 (event別)",
+      "datasource": { "type": "loki", "uid": "grafanacloud-logs" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 25 },
+      "fieldConfig": { "defaults": { "unit": "short", "custom": { "drawStyle": "bars", "lineWidth": 1, "fillOpacity": 45, "showPoints": "never", "stacking": { "mode": "normal", "group": "A" } } }, "overrides": [] },
+      "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["sum"] }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [ { "refId": "A", "datasource": { "type": "loki", "uid": "grafanacloud-logs" }, "editorMode": "code", "queryType": "range", "expr": "sum by (event_name) (count_over_time({service_name=~\"codex.*|Codex.*\"}[$__interval]))", "legendFormat": "{{event_name}}" } ]
+    },
+    {
+      "id": 16, "type": "logs", "title": "Codex structured logs",
+      "datasource": { "type": "loki", "uid": "grafanacloud-logs" },
+      "gridPos": { "h": 12, "w": 24, "x": 0, "y": 33 },
+      "options": { "dedupStrategy": "none", "enableLogDetails": true, "prettifyLogMessage": true, "showCommonLabels": false, "showLabels": false, "showTime": true, "sortOrder": "Descending", "wrapLogMessage": true },
+      "targets": [ { "refId": "A", "datasource": { "type": "loki", "uid": "grafanacloud-logs" }, "editorMode": "code", "queryType": "range", "expr": "{service_name=~\"codex.*|Codex.*\"}" } ]
     }
   ]
 }
