@@ -1,0 +1,8 @@
+# ~/.gitconfig.local — リポジトリ外のマシン固有設定 (setup.sh が雛形から生成)
+# ~/dev-self/ 以外のリポジトリで使う identity を書く。
+#   会社 Mac: 会社アカウント
+#   個人 Mac: 個人アカウント (personal.gitconfig と同じ値) でよい
+#
+# [user]
+# 	name = Your Name
+# 	email = you@example.com

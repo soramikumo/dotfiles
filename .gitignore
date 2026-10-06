@@ -23,3 +23,9 @@ claude/shell-snapshots/
 claude/telemetry/
 claude/mcp-needs-auth-cache.json
 claude/ide/
+
+# Karabiner-Elements が自動生成するバックアップ
+mac/karabiner/automatic_backups/
+
+# 一時ファイル
+*.bak

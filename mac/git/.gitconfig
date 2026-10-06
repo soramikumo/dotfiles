@@ -1,8 +1,23 @@
+# 共通設定。identity はここに書かない:
+#   - ~/dev-self/ 配下 → personal.gitconfig (個人アカウント)
+#   - それ以外        → ~/.gitconfig.local (リポジトリ外。会社 Mac では会社アカウントを書く)
 [user]
-	name = soramikumo
-	email = sorao0324@gmail.com
+	# identity 未設定のリポジトリでは commit させない (誤ったアカウントでのコミット防止)
+	useConfigOnly = true
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+[credential "https://github.com"]
+	helper =
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !/opt/homebrew/bin/gh auth git-credential
+
+# 後に書いたものが優先されるので、includeIf は include より後に置く
+[include]
+	path = ~/.gitconfig.local
+[includeIf "gitdir:~/dev-self/"]
+	path = ~/.config/git/personal.gitconfig

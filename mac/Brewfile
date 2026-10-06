@@ -1,20 +1,29 @@
-tap "hashicorp/tap"
 # Official Amazon AWS command-line interface
 brew "awscli"
 # Microsoft Azure CLI 2.0
 brew "azure-cli"
 # Python code formatter
 brew "black"
+# Tool for emulating mouse-clicks and keystrokes (kindle-ocr スキルで使用)
+brew "cliclick"
 # Command-line fuzzy finder written in Go
 brew "fzf"
 # GitHub command-line tool
 brew "gh"
 # Quickly rewrite git repository history
 brew "git-filter-repo"
+# Kubernetes package manager
+brew "helm"
 # Lightweight and flexible command-line JSON processor
 brew "jq"
 # Handy way to save and run project-specific commands
 brew "just"
+# Modern load testing tool, using Go and JavaScript
+brew "k6"
+# Kubernetes CLI To Manage Your Clusters In Style!
+brew "k9s"
+# Run local Kubernetes cluster in Docker
+brew "kind"
 # Simple terminal UI for git commands
 brew "lazygit"
 # Modern and intuitive terminal-based text editor
@@ -25,20 +34,44 @@ brew "mise"
 brew "mysql"
 # Ambitious Vim-fork focused on extensibility and agility
 brew "neovim"
+# PDF rendering library (pdftotext など)
+brew "poppler"
+# QR Code generation
+brew "qrencode"
 # Cross-shell prompt for astronauts
 brew "starship"
 # Terminal multiplexer
 brew "tmux"
+# Executes a program periodically, showing output fullscreen
+brew "watch"
 # Shell extension to navigate your filesystem faster
 brew "zoxide"
 # Fish-like fast/unobtrusive autosuggestions for zsh
 brew "zsh-autosuggestions"
 # Data management tool that enables working with SQL Server
 cask "azure-data-studio"
+# Anthropic's official Claude AI desktop app
+cask "claude"
 # Monitoring and security across systems, apps, and services
 cask "datadog-agent"
+# App to build and share containerised applications and microservices
+cask "docker-desktop"
+# Web browser
+cask "google-chrome"
+# Keyboard customiser (設定は mac/karabiner をリンク)
+cask "karabiner-elements"
+# Collaboration platform for API development
+cask "postman"
+# Control your tools with a few keystrokes (設定は .rayconfig を手動インポート)
+cask "raycast"
+# Team communication and collaboration software
+cask "slack"
+# Open-source code editor
+cask "visual-studio-code"
 # GPU-accelerated cross-platform terminal emulator and multiplexer
 cask "wezterm"
+# Video communication and virtual meeting platform
+cask "zoom"
 vscode "aaron-bond.better-comments"
 vscode "anthropic.claude-code"
 vscode "bradlc.vscode-tailwindcss"

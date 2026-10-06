@@ -3,7 +3,13 @@
 # クリーンな macOS 環境で 1 回実行すれば dotfiles のセットアップが完了する。
 # べき等: 何度実行しても安全。
 #
+#   ./setup.sh               フルセットアップ (Homebrew / パッケージ / runtimes / リンク)
+#   ./setup.sh --links-only  シンボリックリンクと雛形ファイルの配置だけ行う
+#
 set -euo pipefail
+
+LINKS_ONLY=0
+[ "${1:-}" = "--links-only" ] && LINKS_ONLY=1
 
 # setup.sh は mac/ に置いてあるので、リポジトリルートは 1 段上
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -31,6 +37,8 @@ link() {
   ln -s "$src" "$dst"
   green "link   $dst"
 }
+
+if [ "$LINKS_ONLY" -eq 0 ]; then
 
 # ── 1. Homebrew ──────────────────────────────────────────────────────────────
 step "Homebrew"
@@ -66,6 +74,8 @@ else
   yellow "npm が見つかりません。mise install 完了後に再度このスクリプトを実行してください。"
 fi
 
+fi # LINKS_ONLY
+
 # ── 5. シンボリックリンク ────────────────────────────────────────────────────
 step "symlinks"
 
@@ -77,6 +87,7 @@ link "mac/zsh/.zshenv"           "$HOME/.zshenv"
 # git
 link "mac/git/.gitconfig"        "$HOME/.gitconfig"
 link "mac/git/ignore"            "$HOME/.config/git/ignore"
+link "mac/git/personal.gitconfig" "$HOME/.config/git/personal.gitconfig"
 
 # tmux
 link "mac/tmux/.tmux.conf"       "$HOME/.tmux.conf"
@@ -97,7 +108,12 @@ link "mac/micro/settings.json"   "$HOME/.config/micro/settings.json"
 link "mac/nvim/init.lua"         "$HOME/.config/nvim/init.lua"
 link "mac/nvim/lazy-lock.json"   "$HOME/.config/nvim/lazy-lock.json"
 
-# mise グローバル設定はステップ 3 で配置済み
+# mise グローバル設定 (フルセットアップ時はステップ 3 で配置済み)
+link "mise/config.toml"          "$HOME/.config/mise/config.toml"
+
+# Karabiner-Elements: karabiner.json は Karabiner 自身が書き換える (一時ファイル → rename) ため、
+# ファイル単位のリンクは壊れる。ディレクトリごとリンクする。
+link "mac/karabiner"             "$HOME/.config/karabiner"
 
 # Claude Code (Windows と共有)
 link "claude/CLAUDE.md"          "$HOME/.claude/CLAUDE.md"
@@ -117,10 +133,36 @@ done
 
 # Codex (Windows と共有)
 link "codex/AGENTS.md"           "$HOME/.codex/AGENTS.md"
-link "codex/config.toml"         "$HOME/.codex/config.toml"
 link "codex/ccgate.jsonnet"      "$HOME/.codex/ccgate.jsonnet"
 
-# ── 6. secrets ───────────────────────────────────────────────────────────────
+# Codex config: Codex は書き換え時に symlink を実ファイルで置き換えるため、実ファイルには
+# マシン固有の設定 (projects trust など) が溜まっている。実ファイルなら上書きしない。
+# Grafana 認証が環境にあれば、ローカル実体に [otel] ブロックを追記する (repo には書かない)。
+codex_config="$HOME/.codex/config.toml"
+has_grafana_auth="${CODEX_GRAFANA_CLOUD_AUTHORIZATION:-${GRAFANA_CLOUD_OTLP_HEADERS:-}}"
+if [ -f /etc/codex/config.toml ] && \
+   grep -q '^# BEGIN dotfiles: codex Grafana Cloud OTLP (managed)$' /etc/codex/config.toml; then
+  link "codex/config.toml" "$codex_config"
+elif [ -f "$codex_config" ] && [ ! -L "$codex_config" ]; then
+  gray "skip   $codex_config (ローカル実体)"
+  [ -n "$has_grafana_auth" ] && "$ROOT/observability/set-codex-grafana.sh"
+elif [ -n "$has_grafana_auth" ]; then
+  link "codex/config.toml" "$codex_config"
+  "$ROOT/observability/set-codex-grafana.sh"
+else
+  link "codex/config.toml" "$codex_config"
+fi
+
+# ── 6. マシン固有ファイル (リポジトリ外) ─────────────────────────────────────
+step "local files"
+if [ ! -f "$HOME/.gitconfig.local" ]; then
+  cp "$ROOT/mac/git/gitconfig.local.example" "$HOME/.gitconfig.local"
+  yellow "~/.gitconfig.local を作成しました。~/dev-self/ 以外で使う git の user.name / user.email を書いてください。"
+else
+  gray "skip   ~/.gitconfig.local (既存)"
+fi
+
+# ── 7. secrets ───────────────────────────────────────────────────────────────
 step "secrets"
 if [ ! -f "$HOME/.config/secrets.env" ]; then
   cp "$ROOT/mac/secrets.env.example" "$HOME/.config/secrets.env"
