@@ -46,6 +46,7 @@
     "ask": []
   },
   "model": "opus[1m]",
+  "cleanupPeriodDays": 3650,
   "hooks": {
     "PermissionRequest": [
       {
